@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,14 +17,12 @@ import java.util.logging.Logger;
 public class OrderDAO {
     //Attributes
     private final DatabaseConnection dbc;
-    private final Connection con;
     private static final String SQL = "SQL: ";
     private static final String MID = "mealorderid";
 
     //Constructor
     public OrderDAO() {
         this.dbc = new DatabaseConnection();
-        this.con = dbc.getOpenConnection();
     }
 
     //Methods
@@ -59,22 +58,24 @@ public class OrderDAO {
         List<Order> placedOrders = new ArrayList<>();
         ResultSet placedRS = null;
         try {
-            Statement st = con.createStatement();
-            String query = "SELECT * FROM `findplacedorders`;";
-            placedRS = st.executeQuery(query);
-        } catch (SQLException ex) {
-            Logger.getLogger(OrderDAO.class.getName()).log(Level.SEVERE, SQL, ex);
-        }
-        try {
-            while (placedRS.next()) {
-                Order order = new Order();
-                order.setTableNr(placedRS.getInt("tableid"));
-                order.setOrderId(placedRS.getInt(MID));
-                order.setMaxCookingTime(placedRS.getInt("cookingtime"));
-                order.setStatus(Status.PLACED);
+            DatabaseConnection connection = new DatabaseConnection();
+            
+            connection.openConnection();
+            
+            String query = "SELECT * FROM `kitchenorder` WHERE statusId = 1;";
+            ResultSet resultset = connection.executeSQLSelectStatement(query);
+            
+            while (resultset.next()) {
+                int idFromDb = resultset.getInt("id");
+                Date orderDateFromDb = resultset.getDate("orderDate");
+                int statusIdFromDb = resultset.getInt("statusId");
+                
+                Order order = new Order(idFromDb, orderDateFromDb, statusIdFromDb);
                 
                 placedOrders.add(order);
             }
+            
+            connection.closeConnection();
         } catch (SQLException ex) {
             Logger.getLogger(OrderDAO.class.getName()).log(Level.SEVERE, SQL, ex);
         }

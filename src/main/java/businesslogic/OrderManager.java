@@ -24,6 +24,8 @@ public class OrderManager {
         this.ingredientDAO = new IngredientDAO();
         this.placedOrders = new ArrayList<>();
         this.acceptedOrders = new ArrayList<>();
+        
+        findPlacedOrders();
     }
 
     //Getters
