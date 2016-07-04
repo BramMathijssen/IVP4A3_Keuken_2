@@ -6,6 +6,8 @@
 package main.java.domain;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -15,11 +17,14 @@ public class Order {
     private int id;
     private Date date;
     private int status;
+    private List<Dish> dishList;
     
     public Order(int id, Date date, int status){
         this.id = id;
         this.date = date;
         this.status = status;
+        
+        dishList = new ArrayList<>();
     }
     
     public int getId() {
@@ -32,5 +37,13 @@ public class Order {
     
     public int getStatus() {
         return status;
+    }
+    
+    public List<Dish> getDishList() {
+        return dishList;
+    }
+    
+    public void addDish(Dish dish) {
+        dishList.add(dish);
     }
 }

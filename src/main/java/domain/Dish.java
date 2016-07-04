@@ -10,5 +10,20 @@ package main.java.domain;
  * @author Bram
  */
 public class Dish {
+    private int id;
+    private String dishName;
     
+    public Dish(int id, String dishName) {
+        this.id = id;
+        this.dishName = dishName;
+    }
+    
+    //Getters
+    public int getId() {
+        return id;
+    }
+    
+    public String getDishName() {
+        return dishName;
+    }
 }

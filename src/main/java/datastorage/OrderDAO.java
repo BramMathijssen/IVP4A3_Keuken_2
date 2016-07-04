@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import main.java.domain.Dish;
 
 //Class that executes statements regarding the orders
 public class OrderDAO {
@@ -62,17 +63,30 @@ public class OrderDAO {
             
             connection.openConnection();
             
-            String query = "SELECT * FROM `kitchenorder` WHERE statusId = 1;";
+            String query = "SELECT * FROM `kitchenorder` JOIN `kitchenorder_dish` ON kitchenorder.id = kitchenorder_dish.kitchenOrderId JOIN dish ON kitchenorder_dish.dishId = dish.id WHERE kitchenorder.statusId = 1";
             ResultSet resultset = connection.executeSQLSelectStatement(query);
+            
+            int prevId = 0;
+            Order prevOrder = null;
             
             while (resultset.next()) {
                 int idFromDb = resultset.getInt("id");
                 Date orderDateFromDb = resultset.getDate("orderDate");
                 int statusIdFromDb = resultset.getInt("statusId");
+                int dishIdFromDb = resultset.getInt("dishId");
+                String dishNameFromDb = resultset.getString("dishName");
                 
-                Order order = new Order(idFromDb, orderDateFromDb, statusIdFromDb);
+                if (prevId != idFromDb) {
+                    Order order = new Order(idFromDb, orderDateFromDb, statusIdFromDb);
+                    placedOrders.add(order);
+                    order.addDish(new Dish(dishIdFromDb, dishNameFromDb));
+                    prevOrder = order;
+                }
+                else {
+                    prevOrder.addDish(new Dish(dishIdFromDb, dishNameFromDb));
+                }
                 
-                placedOrders.add(order);
+                prevId = idFromDb;
             }
             
             connection.closeConnection();

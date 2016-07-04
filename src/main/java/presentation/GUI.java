@@ -19,6 +19,7 @@ import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 import main.java.businesslogic.LoginManager;
 import main.java.businesslogic.OrderManager;
+import main.java.domain.Dish;
 import main.java.domain.Order;
 
 public class GUI extends JFrame {
@@ -136,6 +137,9 @@ public class GUI extends JFrame {
             
             for (Order order : orderManager.getPlacedOrders()) {
                 builder.append("Id: " + order.getId() + " Datum: " + order.getDate().toString() + " Status: geplaatst\n");
+                for (Dish dish : order.getDishList()) {
+                    builder.append("   Gerecht " + dish.getId() + ": " + dish.getDishName() + "\n");
+                }
             }
             
             orderArea.setText(builder.toString());
